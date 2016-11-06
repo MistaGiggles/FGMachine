@@ -46,7 +46,13 @@ var experiments = {};
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-var rootDir = process.env.ROOT_DIR;
+
+var rootDir = null;
+if (process.env.ROOT_DIR) {
+  rootDir = process.env.ROOT_DIR;
+} else {
+  rootDir = path.dirname(require.main.filename);
+}
 
 var withDefaultOptions = function(options) {
   var result = { rejectUnauthorized: false, requestCert: false, agent: false, strictSSL: false, tunnel: false }
@@ -256,7 +262,7 @@ app.post("/stop", jsonParser, cors(cors_config), (req, res) => {
   
   if ( specs.shutdown_secret === secret ) {
     res.send({msg:"Shutting down"});
-    //process.exit(); 
+    process.exit(); 
   } else {
     res.status(501).send({error: "Failed to stop machine"});
   }
